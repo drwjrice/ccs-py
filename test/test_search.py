@@ -39,10 +39,21 @@ def test_get_single_value():
     with pytest.raises(MissingPropertyError):
         ctx.get_single_value("b")
 
-    assert 4.3 == ctx.get_single_value("c", cast=float)
+    assert ctx.get_single_value("c", cast=float) == 4.3
 
     with pytest.raises(ValueError):
         ctx.get_single_value("d", cast=float)
+
+
+def test_get_from_env():
+    ctx = load_context(
+        """
+        a = '${USER}'
+        """,
+        env={"USER": "NotARealUser"}
+    )
+
+    assert ctx.get_single_value("a") == "NotARealUser"
 
 
 def test_with_root_node():
