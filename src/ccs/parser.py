@@ -349,6 +349,7 @@ class Lexer:
 class ParserImpl:
     def __init__(self, filename, stream, *, env: Optional[dict[str, str]] = None):
         self.filename = filename
+        self.env = env
         self.lex = Lexer(stream, env)
         self.cur = None
         self.last = None
@@ -423,7 +424,7 @@ class ParserImpl:
                 raise ParseError(
                     self.last.location, "Interpolation not allowed in import statements"
                 )
-            rules.append(ast.Import(self.last.string_value.str()))
+            rules.append(ast.Import(self.last.string_value.str(), env=self.env))
             return True
         elif self.cur.type is Token.CONSTRAIN:
             self.advance()
